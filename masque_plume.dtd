@@ -1,0 +1,170 @@
+<!-- DTD du TP autour de l'émission Le Masque et la Plume  -->
+
+<!-- - - - - -->
+<!-- racine  -->
+<!-- - - - - -->
+
+<!ELEMENT masque_plume (nationalites, editeurs, artistes, organes_de_presse,
+                        animateurs, critiques, emissions)>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- éléments communs aux éditeurs, artistes, animateurs, critiques, livres et films -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+<!-- un artiste, animateur ou critique est une personne, décrite par un prénom, un nom,
+     une éventuelle biographie, un id, un sexe et un pays -->
+<!ENTITY % elt_personne "(prenom, nom, biographie?)">
+<!ENTITY % att_personne "id   ID     #REQUIRED
+                         sexe (M|F)  #REQUIRED
+                         pays IDREFS #REQUIRED">
+
+<!-- une balise fille <nom> apparait dans les
+     balises <editeur>, <artiste>, <organe_de_presse>, <animateur> et <critique> -->
+<!ELEMENT nom (#PCDATA)>
+
+<!-- une balise fille <prenom> apparait dans les balises <artiste>, <animateur> et <critique> -->
+<!ELEMENT prenom (#PCDATA)>
+
+<!-- une sous-balise <titre> peut apparaitre comme balise fille d'une balise
+     <emission>, <livre> ou <film>, ou bien dans la balise <biographie> d'un artiste,
+     la balise <resume> d'un livre ou la balise <synopsis> d'un film -->
+<!ELEMENT titre (#PCDATA)>
+
+<!-- une sous-balise <sous-titre> peut apparaitre comme balise fille d'une balise
+     <emission>, <livre> ou <film> -->
+<!ELEMENT sous-titre (#PCDATA)>
+
+<!-- une sous-balise <biographie> peut apparaitre comme balise fille d'une balise
+     <artiste>, <animateur> ou <critique> ; elle peut en outre contenir des
+     sous-balises <titre> (pas seulement du texte donc) -->
+<!ELEMENT biographie ANY>
+
+<!-- une sous-balise <important> peut apparaitre dans la balise <resume> d'un livre
+     ou la balise <synopsis> d'un film -->
+<!ELEMENT important (#PCDATA)>
+
+<!-- personnages principaux d'un livre (tels que mentionné dans son résumé) ou
+     personnages d'un film incarnés chacun par un acteur
+     (ou plusieurs, par ex. à des âges différents) -->
+
+<!ELEMENT personnages (personnage*)>
+
+<!ELEMENT personnage (#PCDATA)>
+<!-- par simplicité – et proximité sémantique entre un personnage de film et un personnage
+     de livre –, cet attribut est indiqué comme facultatif, pour ne pas avoir à l'indiquer
+     pour un livre : cela empêche la vérification par ce DTD de sa bonne présence pour un film,
+     même si on pourrait y parvenir avec une valeur par défaut référence un artiste factice -->
+<!ATTLIST personnage incarne_par IDREFS #IMPLIED>
+
+<!-- - - - - - - - - - - - - - - - - - - - - -->
+<!-- liste des nationalités et pays associés -->
+<!-- - - - - - - - - - - - - - - - - - - - - -->
+
+<!ELEMENT nationalites (pays+)>
+
+<!ELEMENT pays (#PCDATA)>
+<!ATTLIST pays code ID #REQUIRED>
+
+<!-- - - - - - - - - - - - - - - - -->
+<!-- description de chaque éditeur -->
+<!-- - - - - - - - - - - - - - - - -->
+
+<!ELEMENT editeurs (editeur+)>
+
+<!ELEMENT editeur (nom)>
+<!ATTLIST editeur id       ID    #REQUIRED
+                  site_web CDATA #REQUIRED>
+
+<!-- - - - - - - - - - - - - - - - -->
+<!-- description de chaque artiste -->
+<!-- - - - - - - - - - - - - - - - -->
+
+<!ELEMENT artistes (artiste+)>
+
+<!ELEMENT artiste %elt_personne; >
+<!ATTLIST artiste %att_personne; >
+
+<!-- - - - - - - - - - - - - - - - - - - - - -->
+<!-- description de chaque organe de presse  -->
+<!-- - - - - - - - - - - - - - - - - - - - - -->
+
+<!ELEMENT organes_de_presse (organe_de_presse+)>
+
+<!ELEMENT organe_de_presse (nom)>
+<!ATTLIST organe_de_presse id       ID    #REQUIRED
+                           site_web CDATA #REQUIRED>
+
+<!-- - - - - - - - - - - - - - - - - -->
+<!-- description de chaque animateur -->
+<!-- - - - - - - - - - - - - - - - - -->
+
+<!ELEMENT animateurs (animateur+)>
+
+<!ELEMENT animateur %elt_personne; >
+<!ATTLIST animateur %att_personne; >
+
+<!-- - - - - - - - - - - - - - - - - -->
+<!-- description de chaque critique  -->
+<!-- - - - - - - - - - - - - - - - - -->
+
+<!ELEMENT critiques (critique+)>
+
+<!ELEMENT critique %elt_personne; >
+<!ATTLIST critique %att_personne;
+                   organe_de_presse IDREF #REQUIRED>
+
+<!-- - - - - - - - - - - - - - - - - -->
+<!-- description de chaque émission  -->
+<!-- - - - - - - - - - - - - - - - - -->
+
+<!ELEMENT emissions (emission+)>
+
+<!ELEMENT emission (titre, sous-titre, (livres | films))>
+<!ATTLIST emission date CDATA                                     #REQUIRED
+                   type (littéraire|cinématographique|dramatique) #REQUIRED
+                   animateur IDREF                                #REQUIRED
+                   critiques IDREFS                               #REQUIRED>
+
+<!-- - - - - - - - - - - - - - -  -->
+<!-- description de chaque livre  -->
+<!-- - - - - - - - - - - - - - -  -->
+
+<!ELEMENT livres (livre+)>
+
+<!ELEMENT livre (titre, sous-titre?, resume, personnages)>
+<!ATTLIST livre id            ID    #REQUIRED
+                auteur        IDREF #REQUIRED
+                editeur       IDREF #REQUIRED
+                date_parution CDATA #REQUIRED
+                nb_pages      CDATA #REQUIRED
+                isbn          CDATA #REQUIRED
+                prix          CDATA #REQUIRED>
+
+<!-- le résumé peut contenir des sous-balises <titre>, <extrait> ou <important> -->
+<!ELEMENT resume ANY>
+
+<!ELEMENT extrait (#PCDATA)>
+
+<!-- - - - - - - - - - - - - - - -->
+<!-- description de chaque film  -->
+<!-- - - - - - - - - - - - - - - -->
+
+<!ELEMENT films (film+)>
+
+<!ELEMENT film (titre, sous-titre?, synopsis, casting, personnages)>
+<!ATTLIST film id               ID     #REQUIRED
+               pays             IDREFS #REQUIRED
+               annee_production CDATA  #REQUIRED
+               duree            CDATA  #REQUIRED
+               date_sortie      CDATA  #REQUIRED>
+
+<!-- le synopsis peut contenir des sous-balises <important> ou <titre> -->
+<!ELEMENT synopsis ANY>
+
+<!-- le casting référence les réalisateurs et scénaristes du film -->
+
+<!ELEMENT casting EMPTY>
+<!ATTLIST casting realisateurs IDREFS #REQUIRED
+                  scenaristes  IDREFS #REQUIRED>
+
+
