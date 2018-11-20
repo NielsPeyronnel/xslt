@@ -49,8 +49,8 @@
 					<p>Ce site a été réalisé par
 						<strong>Niels Peyronnel</strong>
 						dans le cadre du TP d'XML encadré par
-						<strong>Martial Bret</strong>
-						.</p>
+						<strong>Martial Bret.</strong></p>
+						<p>Le code source est disponible <strong><a class="linkgit" href="https://github.com/NielsPeyronnel/xslt">ici</a>.</strong></p>
 				</div>
 				<hr/>
 
@@ -62,6 +62,9 @@
 							<h2>
 								<xsl:value-of select="titre"/>
 							</h2>
+							<h3>
+								<xsl:value-of select="concat('Présenté par ',id(@animateur))"/>
+							</h3>
 							<p>
 								<xsl:value-of select="concat('Émission du ',@date)"/>
 							</p>
