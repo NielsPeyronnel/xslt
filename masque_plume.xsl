@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output doctype-system="about:legacy-compat" encoding="UTF-8" indent="yes" method="html"/>
-	<xsl:template name="tokenize">
-		<xsl:param name="inputString"/>
-		<xsl:param name="separator" select="' '"/>
-		<xsl:param name="resultElement" select="'item'"/>
-		<xsl:variable name="token" select="substring-before($inputString, $separator)"/>
-		<xsl:variable name="nextToken" select="substring-after($inputString, $separator)"/>
-		<xsl:if test="$token">
-			<xsl:element name="{$resultElement}">
-				<xsl:value-of select="$token"/>
-			</xsl:element>
-		</xsl:if>
-		<xsl:if test="$nextToken">
-			<xsl:call-template name="tokenize">
-				<xsl:with-param name="inputString" select="$nextToken"/>
-				<xsl:with-param name="separator" select="$separator"/>
-				<xsl:with-param name="resultElement" select="$resultElement"/>
-			</xsl:call-template>
-		</xsl:if>
-	</xsl:template>
 	<xsl:template match="/">
 		<html>
 			<head>
@@ -32,32 +13,37 @@
 				<link href="masque_plume.css" rel="stylesheet" type="text/css"/>
 				<link href="hover-min.css" rel="stylesheet"/>
 			</head>
-			<script>$(document).ready(function(){
-    $('[data-toggle=&quot;tooltip&quot;]').tooltip(); 
-});
 
-$(document).ready(function(){
-     $(window).scroll(function () {
-            if ($(this).scrollTop() &gt;50) {
-                $('#back-to-top').fadeIn();
-            } else {
-                $('#back-to-top').fadeOut();
-            }
-        });
-        // scroll body to 0px on click
-        $('#back-to-top').click(function () {
-            $('#back-to-top').tooltip('hide');
-            $('body,html').animate({
-                scrollTop: 0
-            }, 800);
-            return false;
-        });
-        
-        $('#back-to-top').tooltip('show');
+			<!-- Cette partie permet de lancer le JS tel que le tooltip bootstrap et le bouton qui permet de revenir en haut du site -->
 
-});
-</script>
+			<script>
+				$(document).ready(function(){
+    				$('[data-toggle=&quot;tooltip&quot;]').tooltip(); 
+				});
+
+				$(document).ready(function(){
+     				$(window).scroll(function () {
+			            if ($(this).scrollTop() &gt;50) {
+			                $('#back-to-top').fadeIn();
+			            } else {
+			                $('#back-to-top').fadeOut();
+			            }
+        			});
+
+			        $('#back-to-top').click(function () {
+			            $('#back-to-top').tooltip('hide');
+			            $('body,html').animate({
+			                scrollTop: 0
+			            }, 800);
+			            return false;
+			        });
+	        
+	        		$('#back-to-top').tooltip('show');
+
+				});
+			</script>
 			<body>
+				<!-- Grand header qui présente le TP -->
 				<div class="jumbotron text-center">
 					<h1>Le Masque et la Plume</h1>
 					<p>Ce site a été réalisé par
@@ -67,6 +53,9 @@ $(document).ready(function(){
 						.</p>
 				</div>
 				<hr/>
+
+				<!-- On fait un traitement pour chaque émission à l'aide du for-each -->
+
 				<xsl:for-each select="masque_plume/emissions/emission">
 					<div class="btn btn-block hvr-sink" data-target="#{generate-id(.)}" data-toggle="collapse" type="button">
 						<div class="jumbotron text-center sep ">
@@ -100,6 +89,9 @@ $(document).ready(function(){
 								</div>
 							</div>
 						</div>
+
+						<!-- On teste si l'émission contient des livres ou des films, l'avantage de cette solution est que nous pouvons avoir les deux au seins d'une même émission sans changer le code -->
+
 						<xsl:choose>
 							<xsl:when test="films">
 								<div class="container-fluid text-center">
@@ -285,6 +277,9 @@ $(document).ready(function(){
 						<hr/>
 					</div>
 				</xsl:for-each>
+
+				<!-- On traite ici toute la partie annexe, en concernant seulement les artistes qui possèdent une autobiographie et ces derniers sont triés par leur nom de famille -->
+
 				<div class="container">
 					<div class="jumbotron text-center sep annexe">
 						<h2>Annexe
